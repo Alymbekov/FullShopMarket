@@ -1,11 +1,52 @@
 
 import requests
 from bs4 import BeautifulSoup
+from django.contrib.auth import (
+    authenticate, login
+)
 
-from .forms import ContactForm
+from django.contrib.auth import get_user_model
+
+from .forms import (
+    ContactForm, LoginForm, RegisterForm
+)
+
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+
+
+def login_page(request):
+    form = LoginForm(request.POST or None)
+    print(request.user.is_authenticated)
+    if form.is_valid():
+        username, password = form.cleaned_data.values()
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/login')
+            # A backend authenticated the credentials
+        else:
+            print("Error")
+            # No backend authenticated the credentials
+    return render(request, 'auth/login.html', locals())
+
+def register_page(request):
+    form = RegisterForm(request.POST or None)
+
+    if form.is_valid():
+        User = get_user_model()
+        print(form.cleaned_data)
+        username = form.cleaned_data.get("username", None)
+        email = form.cleaned_data.get("email", None)
+        password = form.cleaned_data.get("password", None)
+        new_user = User.objects.create_user(
+            username, email, password
+        )
+        if new_user:
+            return redirect("/login")
+
+    return render(request, 'auth/register.html', locals())
 
 
 def get_html(url):
