@@ -1,19 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load custom_tag %}
+{% block title %} List of products {% endblock %}
+
+{% block content %}  
     {{view}}
     {{paginator}}
     {{is_paginated}}
 
     {{ key }}
     {% for obj in object_list %}
-        {{obj}}
+        {{obj.title|swapcase}}
     {% endfor %}
+    <br><br>
+
+    <h1>Featured Products</h1>
+    {% include 'includes/featured.html' %}
+
+    <br>
+    <br>
     
-</body>
-</html>
+    <h1>Featured Products with simple tag</h1>
+    {% get_featured_products as objects %}
+    {% for featured in objects %}
+        <h3>{{featured}}</h3>
+    {% endfor  %}
+
+    {% get_some_results 10 %}
+
+
+{% endblock %}

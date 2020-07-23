@@ -11,7 +11,9 @@ from .views import (
 
 from applications.products.views import (
     ProductListView, ProductDetailView, 
-    products_list_view, products_detail_view
+    products_list_view, products_detail_view,
+    ProductFeaturedView, ProductBySlugDetailView
+
     )
 
 urlpatterns = [
@@ -26,6 +28,10 @@ urlpatterns = [
 
     path('products/<int:pk>/', ProductDetailView.as_view()),
     path('products-fbv/<int:pk>/', products_detail_view),
+
+    path('featured_products/', ProductFeaturedView.as_view()),
+    path('products_by_slug/<slug:slug>/', ProductBySlugDetailView.as_view()
+         ),
 
     path('admin/', admin.site.urls),
 ]
