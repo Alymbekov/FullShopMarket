@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render, get_object_or_404
 
@@ -9,7 +10,7 @@ class ProductListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProductListView, self).get_context_data(*args, **kwargs)
-        context['key'] = "Value"
+        context['featured'] = Product.objects.featured()
         return context
 
 def products_list_view(request):
@@ -28,15 +29,32 @@ class ProductDetailView(DetailView):
 
 
 def products_detail_view(request, pk):
-    instance = get_object_or_404(Product, pk=pk)
+    # instance = get_object_or_404(Product, pk=pk)
+   
+    obj = Product.objects.get_by_id_s(pk=pk)
+    # if obj.exists and obj.count() == 1:
+    #     obj = obj.first()
+    # else:
+    #     raise Http404("Нет такой id для продукта")
+
     context = {
-        'instance': instance
+        'instance': obj
     }
     return render(request, 'products/detail.html', context)
 
 
 
+class ProductFeaturedView(ListView):
+    template_name = "products/featured.html"
+    model = Product
 
+    def get_queryset(self, *args, **kwargs):
+        return Product.objects.featured()
+
+class ProductBySlugDetailView(DetailView):
+    template_name = "products/detail.html"
+    model = Product
+    context_object_name = "instance"
 
 
 
