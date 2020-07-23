@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 from .utils import (
     upload_image_path, unique_slug_generator
     )
@@ -45,9 +47,15 @@ class Product(models.Model):
         return f'{self.__class__} - {self.title}'
 
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            print(self)
-            self.slug = unique_slug_generator(self)
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         print(self)
+    #         self.slug = unique_slug_generator(self)
+    #
+    #     return super(Product, self).save(*args, **kwargs)
 
-        return super(Product, self).save(*args, **kwargs)   
+
+@receiver(signals.pre_save, sender=Product)
+def add_product_slug(sender, instance, **kwargs):
+    if not instance.id:
+        instance.slug = unique_slug_generator(instance)
