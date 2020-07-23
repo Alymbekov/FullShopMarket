@@ -3,6 +3,8 @@ import os
 import random
 import string
 
+from transliterate import detect_language
+from transliterate import slugify as slugify_translit
 from django.utils.text import slugify
 
 def get_filename_ext(filepath):
@@ -28,10 +30,13 @@ def random_slug_generator(
 def unique_slug_generator(instance, new_slug=None):
     print(new_slug)
     if new_slug is not None:
-        print("OOOKKKK")
         slug = new_slug
     else:
-        slug = slugify(instance.title, allow_unicode=True)
+        lang = detect_language(instance.title)
+        if lang:
+            slug = slugify_translit(instance.title, lang)
+        else:
+            slug = slugify(instance.title, allow_unicode=True)
 
     Class_ = instance.__class__
 
