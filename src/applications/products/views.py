@@ -1,8 +1,14 @@
 from django.http import Http404
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 
 from .models import Product
+
+# class ProductSearchView(ListView):
+#     queryset = Product.objects.all()
+#     template_name = 'products/searchresult.html'
+
 
 class ProductListView(ListView):
     queryset = Product.objects.all()
@@ -12,7 +18,20 @@ class ProductListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProductListView, self).get_context_data(*args, **kwargs)
         context['featured'] = Product.objects.featured()
+        context['page_products'] = True 
+
         return context
+
+    
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        query_result = self.request.GET.get('search')
+        if query_result:
+            queryset = Product.objects.filter(
+                Q(title__icontains=query_result) |
+                Q(description__icontains=query_result)
+            )
+        return queryset
 
 def products_list_view(request):
     queryset = Product.objects.all()
