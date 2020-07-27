@@ -17,16 +17,16 @@ from applications.products.views import (
     )
 
 urlpatterns = [
-    path('', index),
+    path('', index, name="index"),
     re_path(r'^about/$', about_page),
     path('contact/', contact_page),
-    path('register/', register_page),
-    path('login/', login_page),
+    path('register/', register_page, name="register"),
+    path('login/', login_page, name="login"),
 
-    path('products/', ProductListView.as_view()),
+    path('products/', ProductListView.as_view(), name="products"),
     path('products-fbv/', products_list_view),
 
-    path('products/<int:pk>/', ProductDetailView.as_view()),
+    path('products/<int:pk>/', ProductDetailView.as_view(), name="product"),
     path('products-fbv/<int:pk>/', products_detail_view),
 
     path('featured_products/', ProductFeaturedView.as_view()),

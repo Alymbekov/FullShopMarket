@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.db.models import signals
 from django.dispatch import receiver
 from .utils import (
@@ -45,7 +46,10 @@ class Product(models.Model):
 
     def __repr__(self):
         return f'{self.__class__} - {self.title}'
-
+    
+    def get_absolute_url(self, *args, **kwargs):
+        print(args, kwargs)
+        return reverse('product', args=[str(self.id)]) 
 
     # def save(self, *args, **kwargs):
     #     if not self.id:

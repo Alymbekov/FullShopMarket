@@ -3,8 +3,23 @@
 
 {% block content %}
 
-    {{instance.title}}
+<div class="card" style="width: 18rem;">
+    <img src="{{instance.image.url}}" alt="">
+    <div class="card-body">
+        <h5 class="card-title">{{instance.title}}</h5>
+        <p class="card-text">{{instance.description}}
+        </p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">{{instance.price}}</li>
+    </ul>
+    <div class="card-body">
+        <a href="#" class="card-link">{{instance.title}}</a>
+    </div>
+</div>
+
+
 
 {% endblock%}
-
-

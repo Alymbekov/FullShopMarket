@@ -2,30 +2,46 @@
 {% load custom_tag %}
 {% block title %} List of products {% endblock %}
 
-{% block content %}  
-    {{view}}
-    {{paginator}}
-    {{is_paginated}}
+{% block content %}
+{% for obj in object_list %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card-group">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{obj.image.url}}" class="card-img-top"  alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{obj.title|swapcase}}</h5>
+                        <p class="card-text">{{obj.description}}</p>
+                        <p class="card-text">Price {{obj.price}}</p>
+                        <a href="{{obj.get_absolute_url}}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
 
-    {{ key }}
-    {% for obj in object_list %}
-        {{obj.title|swapcase}}
-    {% endfor %}
-    <br><br>
-
-    <h1>Featured Products</h1>
-    {% include 'includes/featured.html' %}
-
-    <br>
-    <br>
-    
-    <h1>Featured Products with simple tag</h1>
-    {% get_featured_products as objects %}
-    {% for featured in objects %}
-        <h3>{{featured}}</h3>
-    {% endfor  %}
-
-    {% get_some_results 10 %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% include "includes/pagination.html" with obj=object_list %}
 
 
-{% endblock %}git st
+
+<br><br>
+
+<h1>Featured Products</h1>
+{% include 'includes/featured.html' %}
+
+<br>
+<br>
+
+<h1>Featured Products with simple tag</h1>
+{% get_featured_products as objects %}
+{% for featured in objects %}
+<h3>{{featured}}</h3>
+{% endfor  %}
+
+{% get_some_results 10 %}
+
+
+{% endblock %}
