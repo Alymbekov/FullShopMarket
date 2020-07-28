@@ -19,7 +19,7 @@ class ProductListView(ListView):
         context = super(ProductListView, self).get_context_data(*args, **kwargs)
         context['featured'] = Product.objects.featured()
         context['page_products'] = True 
-
+        context['search_query'] = self.request.GET.get('search')
         return context
 
     
