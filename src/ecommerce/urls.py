@@ -9,6 +9,8 @@ from .views import (
     register_page
 )
 
+from applications.cart.views import cart_home
+
 from applications.products.views import (
     ProductListView, ProductDetailView, 
     products_list_view, products_detail_view,
@@ -32,6 +34,8 @@ urlpatterns = [
     path('featured_products/', ProductFeaturedView.as_view()),
     path('products_by_slug/<slug:slug>/', ProductBySlugDetailView.as_view()
          ),
+
+    path('carts', cart_home, name="carts"),
 
     path('admin/', admin.site.urls),
 ]
