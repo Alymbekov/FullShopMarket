@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     #custom app
     'applications.products',
+    'applications.cart',
 ]
 
 MIDDLEWARE = [

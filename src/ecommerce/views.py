@@ -54,6 +54,8 @@ def get_html(url):
     return response.text
 
 def index(request):
+    # data = request.session.keys()
+    # print(data)
     import random
     random_data = random.choice([x for x in range(1, 50)])
     context = {
