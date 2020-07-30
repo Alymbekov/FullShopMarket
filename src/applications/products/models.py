@@ -49,7 +49,7 @@ class Product(models.Model):
     
     def get_absolute_url(self, *args, **kwargs):
         print(args, kwargs)
-        return reverse('product', args=[str(self.id)]) 
+        return reverse('product', args=[str(self.slug)])
 
     # def save(self, *args, **kwargs):
     #     if not self.id:

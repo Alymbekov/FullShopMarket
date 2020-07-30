@@ -69,7 +69,7 @@ class Cart(models.Model):
 #     instance.total = total
 
 
-def pre_save_cart_receiver(
+def m2m_changed_cart_receiver(
     sender, instance,
     action, *args, **kwargs
 ):
@@ -78,7 +78,20 @@ def pre_save_cart_receiver(
         total = 0
         for x in instance.products.all():
             total += x.price
-        instance.subtotal = total
-        instance.save()
 
-m2m_changed.connect(pre_save_cart_receiver, sender=Cart.products.through)
+        if instance.subtotal != total:
+            instance.subtotal = total
+            instance.save()
+
+
+m2m_changed.connect(
+    m2m_changed_cart_receiver,
+    sender=Cart.products.through)
+
+
+def pre_save_cart_receiver(sender, instance, *args, **kwargs):
+    print(instance.subtotal)
+    instance.subtotal = instance.subtotal + 10
+    print(instance.subtotal)
+
+signals.pre_save.connect(pre_save_cart_receiver, sender=Cart)

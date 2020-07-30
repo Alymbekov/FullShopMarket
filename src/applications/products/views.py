@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 
+from applications.cart.models import Cart
 from .models import Product
 
 # class ProductSearchView(ListView):
@@ -75,6 +76,32 @@ class ProductBySlugDetailView(DetailView):
     template_name = "products/detail.html"
     model = Product
     context_object_name = "instance"
+
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            ProductBySlugDetailView,
+            self
+        ).get_context_data(**kwargs)
+
+        cart_obj, new_obj = Cart.objects.get_or_new(self.request)
+        context['cart'] = cart_obj
+        return context
+
+    def get_object(self, **kwargs):
+        request = self.request
+        slug = self.kwargs.get('slug')
+
+        try:
+            instance = Product.objects.get(slug=slug)
+        except Product.DoesNotExist:
+            raise Http404("Not Found ")
+        except Product.MultipleObjectsReturned:
+            qs = Product.objects.filter(slug=slug)
+            instance = qs.first()
+        except:
+            raise Http404("We don't know")
+        return instance
 
 
 

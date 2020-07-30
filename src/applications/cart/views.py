@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Cart
+from applications.products.models import Product
 
 
 def cart_create(user=None):
@@ -20,3 +21,16 @@ def cart_home(request):
     return render(request, 'carts/home.html', locals())
 
 
+def cart_update(request):
+    product_id = 1
+    product_obj = Product.objects.get(pk=product_id)
+    print(product_obj)
+    cart_obj, new_obj = Cart.objects.get_or_new(request)
+    if product_obj in cart_obj.products.all():
+        print("is work")
+        cart_obj.products.remove(product_obj)
+    else:
+        print('else condition')
+        cart_obj.products.add(product_obj)
+
+    return redirect(product_obj.get_absolute_url())
