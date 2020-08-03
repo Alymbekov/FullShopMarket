@@ -14,28 +14,52 @@ def home_page(request):
 
 
 def about_page(request):
+    result = get_html("https://yastroymarket.ru/about/")
+    print(result)
+    soup = BeautifulSoup(result, 'html.parser')
+    data = soup.find_all('body')
+
     context = {
-        "title": "About page",
+        "title": "This is About Page",
         "content": "Welcome to the About Page",
+        "data": data
     }
-    return render(request, "home_page.html", context)
+    print(locals())
+    return render(request, "index.html", locals())
 
 
 def contact_page(request):
-    contact_form = ContactForm(request.POST or None)
+    form = ContactForm(request.POST or None)
     context = {
-        "title": "Contact page",
-        "content": "Welcome to the Contact Page",
-        "form": contact_form
+        "title": "This is Contact Page",
+        "content": "Welcome to the Contact page",
+        "contact": True,
+        "form": form
     }
-    if contact_form.is_valid():
-        print(contact_form.cleaned_data)
+    if form.is_valid():
+        print(form.cleaned_data)
     # if request.method == "POST":
-    #     print(request.POST.get('fullname'))
-    #     print(request.POST.get('email'))
-    #     print(request.POST.get('content'))
+    #     print(request.POST.get("fullname"))
+    #     print(request.POST.get("email"))
+    #     print(request.POST.get("content"))
 
-    return render(request, "contact/view.html", context)
+    return render(request, "index.html", context)
+
+import requests
+from bs4 import BeautifulSoup
+from django.contrib.auth import (
+    authenticate, login
+)
+
+from django.contrib.auth import get_user_model
+
+from .forms import (
+    ContactForm, LoginForm, RegisterForm
+)
+
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+
 
 
 def login_page(request):
@@ -43,45 +67,53 @@ def login_page(request):
     print(request.user.is_authenticated)
     if form.is_valid():
         username, password = form.cleaned_data.values()
-        user = authenticate(request, username=username, password=password)
-
+        user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
             return redirect('/login')
-
+            # A backend authenticated the credentials
         else:
             print("Error")
-
-    context = {
-        "form": form
-    }
-    return render(request, "auth/login.html", context)
-
-
-User = get_user_model()
-
+            # No backend authenticated the credentials
+    return render(request, 'auth/login.html', locals())
 
 def register_page(request):
     form = RegisterForm(request.POST or None)
-    context = {
-        "form": form
-    }
+
     if form.is_valid():
+        User = get_user_model()
         print(form.cleaned_data)
-        username = form.cleaned_data.get("username")
-        email = form.cleaned_data.get("email")
-        password = form.cleaned_data.get("password")
+        username = form.cleaned_data.get("username", None)
+        email = form.cleaned_data.get("email", None)
+        password = form.cleaned_data.get("password", None)
         new_user = User.objects.create_user(
-            username, email, password)
+            username, email, password
+        )
         if new_user:
-            return redirect("/")
+            return redirect("/login")
 
-    return render(request, "auth/register.html", context)
+    return render(request, 'auth/register.html', locals())
 
 
-def home_page_old(request):
+def get_html(url):
+    response = requests.get(url)
+    return response.text
+
+def index(request):
+    # data = request.session.keys()
+    # print(data)
+    import random
+    random_data = random.choice([x for x in range(1, 50)])
+    context = {
+        "title": "Hey guys !!!",
+        "random": random_data
+    } 
+    return render(request, "index.html", context)
+
+
+def index_old(request):
     html_ = """
-    <!doctype html>
+        <!doctype html>
     <html lang="en">
     <head>
         <!-- Required meta tags -->
@@ -93,8 +125,7 @@ def home_page_old(request):
 
         <title>Hello, world!</title>
     </head>
-    <body>
-
+    <body> 
         <h1>Hello, world!</h1>
 
         <!-- Optional JavaScript -->
@@ -105,4 +136,8 @@ def home_page_old(request):
     </body>
     </html>
     """
-    return HttpResponse(html_)
+    return HttpResponse(
+        html_
+        )
+
+

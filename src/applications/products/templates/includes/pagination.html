@@ -1,0 +1,19 @@
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if page_obj.has_previous or page_obj.has_previous and search_query %}
+        <li class="page-item"><a class="page-link" href="{%if search_query %}?search={{search_query}}&page={{page_obj.previous_page_number}}{%else%}?page={{page_obj.previous_page_number}}{%endif%}">Previous</a></li>
+        {% endif %}
+        {% for x in page_obj.paginator.page_range %}
+        {% if page_obj.number == x %}
+        <li class="page-item active"><a class="page-link" href="{% if search_query %}?search={{search_query}}&page={{x}}{%else%}?page={{x}}{%endif%}">{{x}}</a></li>
+        {% elif search_query %}
+        <li class="page-item"><a class="page-link" href="?search={{search_query}}&page={{x}}">{{x}}</a></li>
+        {% elif x > page_obj.number|add:-3 and x < page_obj.number|add:3  %}
+        <li class="page-item"><a class="page-link" href="?page={{x}}">{{x}}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next or page_obj.has_next and search_query %}
+        <li class="page-item"><a class="page-link" href="{% if search_query %}?search={{search_query}}&page={{ page_obj.next_page_number}}{%else%}?page={{page_obj.next_page_number}}{%endif%}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
