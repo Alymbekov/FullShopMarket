@@ -1,65 +1,80 @@
-from django.db import models
+import os
+import random
 from django.urls import reverse
-from django.db.models import signals
-from django.dispatch import receiver
-from .utils import (
-    upload_image_path, unique_slug_generator
-    )
+from django.db import models
 
-from django.http import Http404
+from django.db.models.signals import pre_save, post_save
+
+from ecommerce.utils import unique_slug_generator
 
 
-# ORM - OBJECT RELATIONAL MAPPING
+def get_filename_ext(filepath):
+    base_name = os.path.basename(filepath)
+    name, ext = os.path.splitext(base_name)
+    return name, ext
 
-class FeaturedQuerySet(models.QuerySet):
+
+def upload_image_path(instance, filename):
+    print(instance)
+    print(filename)
+    new_filename = random.randint(1, 354345345345)
+    name, ext = get_filename_ext(filename)
+    final_filename = '{new_filename}{ext}'.format(
+        new_filename=new_filename, ext=ext)
+    return "products/{new_filename}/{final_filename}".format(
+        new_filename=new_filename,
+        final_filename=final_filename)
+
+
+class ProductQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(active=True)
+
     def featured(self):
-        return self.filter(is_featured=True)
-        
+        return self.filter(featured=True)
+
+
 class ProductManager(models.Manager):
     def get_queryset(self):
-        return FeaturedQuerySet(self.model, using=self._db)
-    
+        return ProductQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset().active()
+
     def featured(self):
         return self.get_queryset().featured()
 
-    def get_by_id_s(self, pk):
-        obj = Product.objects.filter(pk=pk)
-        if obj.exists and obj.count() == 1:
-            obj = obj.first()
-        else:
-            raise Http404("Нет такой id для продукта")
-        return obj
-        
+    def get_by_id(self, id):
+        qs = self.get_queryset().filter(id=id)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+
 class Product(models.Model):
-    slug = models.SlugField(null=True, blank=True)
     title = models.CharField(max_length=150)
+    slug = models.SlugField(blank=True, unique=True)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2, max_digits=20, default=29.99)
-    is_featured = models.BooleanField(default=False)
-    image = models.ImageField(
-        upload_to=upload_image_path, null=True, blank=True
-    )
     objects = ProductManager()
-    
+    image = models.ImageField(
+        upload_to=upload_image_path, null=True, blank=True)
+    featured = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    # def get_absolute_url(self):
+    # return '/products/{slug}/'.format(slug=self.slug)
+    def get_absolute_url(self):
+        return reverse("products:detail", kwargs={"slug": self.slug})
+
     def __str__(self):
         return self.title
 
-    def __repr__(self):
-        return f'{self.__class__} - {self.title}'
-    
-    def get_absolute_url(self, *args, **kwargs):
-        print(args, kwargs)
-        return reverse('product', args=[str(self.slug)])
 
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         print(self)
-    #         self.slug = unique_slug_generator(self)
-    #
-    #     return super(Product, self).save(*args, **kwargs)
-
-
-@receiver(signals.pre_save, sender=Product)
-def add_product_slug(sender, instance, **kwargs):
-    if not instance.id:
+def product_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
         instance.slug = unique_slug_generator(instance)
+
+
+pre_save.connect(product_pre_save_receiver, sender=Product)

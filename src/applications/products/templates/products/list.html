@@ -1,31 +1,17 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load custom_tag %}
-{% block title %} List of products {% endblock %}
 
 {% block content %}
-{% for obj in object_list %}
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="card-group">
-                <div class="card" style="width: 18rem;">
-                    <img src="{{obj.image.url}}" class="card-img-top"  alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{obj.title|swapcase}}</h5>
-                        <p class="card-text">{{obj.description}}</p>
-                        <p class="card-text">Price {{obj.price}}</p>
-                        <a href="{{obj.get_absolute_url}}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
+<div class='row'>
 
-            </div>
-        </div>
+    {% for obj in object_list %}
+    <div class='col'>
+        {% include 'products/snippets/card.html' with instance=obj %}
+
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 {% include "includes/pagination.html" with obj=object_list %}
-
-
 
 <br><br>
 
@@ -42,6 +28,4 @@
 {% endfor  %}
 
 {% get_some_results 10 %}
-
-
 {% endblock %}

@@ -1,3 +1,49 @@
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import get_user_model
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from .forms import ContactForm, LoginForm, RegisterForm
+
+
+def home_page(request):
+    context = {
+        "title": "Hello world",
+        "content": "Welcome to the homepage",
+    }
+    return render(request, "home_page.html", context)
+
+
+def about_page(request):
+    result = get_html("https://yastroymarket.ru/about/")
+    print(result)
+    soup = BeautifulSoup(result, 'html.parser')
+    data = soup.find_all('body')
+
+    context = {
+        "title": "This is About Page",
+        "content": "Welcome to the About Page",
+        "data": data
+    }
+    print(locals())
+    return render(request, "index.html", locals())
+
+
+def contact_page(request):
+    form = ContactForm(request.POST or None)
+    context = {
+        "title": "This is Contact Page",
+        "content": "Welcome to the Contact page",
+        "contact": True,
+        "form": form
+    }
+    if form.is_valid():
+        print(form.cleaned_data)
+    # if request.method == "POST":
+    #     print(request.POST.get("fullname"))
+    #     print(request.POST.get("email"))
+    #     print(request.POST.get("content"))
+
+    return render(request, "index.html", context)
 
 import requests
 from bs4 import BeautifulSoup
@@ -63,40 +109,6 @@ def index(request):
         "random": random_data
     } 
     return render(request, "index.html", context)
-
-
-def about_page(request):
-    result = get_html("https://yastroymarket.ru/about/")
-    print(result)
-    soup = BeautifulSoup(result, 'html.parser')
-    data = soup.find_all('body')
-
-    context = {
-        "title": "This is About Page",
-        "content": "Welcome to the About Page", 
-        "data": data
-    }
-    print(locals())
-    return render(request, "index.html", locals())
-
-
-def contact_page(request):
-    form =  ContactForm(request.POST or None)
-    context = {
-        "title": "This is Contact Page",
-        "content": "Welcome to the Contact page",
-        "contact": True,
-        "form": form
-    }
-    if form.is_valid():
-        print(form.cleaned_data)
-    # if request.method == "POST":
-    #     print(request.POST.get("fullname"))
-    #     print(request.POST.get("email"))
-    #     print(request.POST.get("content"))
-
-    return render(request, "index.html", context)
-
 
 
 def index_old(request):
