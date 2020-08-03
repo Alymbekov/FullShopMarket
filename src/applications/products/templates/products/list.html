@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_tag %}
 
 {% block content %}
 <div class='row'>
@@ -10,4 +11,21 @@
     </div>
     {% endfor %}
 </div>
+{% include "includes/pagination.html" with obj=object_list %}
+
+<br><br>
+
+<h1>Featured Products</h1>
+{% include 'includes/featured.html' %}
+
+<br>
+<br>
+
+<h1>Featured Products with simple tag</h1>
+{% get_featured_products as objects %}
+{% for featured in objects %}
+<h3>{{featured}}</h3>
+{% endfor  %}
+
+{% get_some_results 10 %}
 {% endblock %}

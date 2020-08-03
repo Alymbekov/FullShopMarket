@@ -1,5 +1,5 @@
 from django.urls import path
-from products.views import (
+from applications.products.views import (
     ProductListView, ProductDetailView,
     products_list_view, products_detail_view,
     ProductFeaturedDetailView, ProductFeaturedListView,

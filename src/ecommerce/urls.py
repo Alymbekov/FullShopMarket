@@ -21,7 +21,7 @@ urlpatterns = [
     path('about/', about_page, name="about"),
     path('contact/', contact_page, name="contact"),
 
-    path('products/', include(("products.urls", 'products'), namespace='products')),
+    path('products/', include(("applications.products.urls", 'applications.products'), namespace='products')),
     # path('products-fbv/', products_list_view, name='productsfbv'),
 
     # path('products/<int:pk>/', ProductDetailView.as_view()),
