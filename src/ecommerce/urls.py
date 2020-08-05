@@ -39,6 +39,7 @@ urlpatterns = [
     path('users/', include('applications.users.urls')),
     re_path(r'^about/$', about_page),
     path('orders/', include('applications.orders.urls')),
+    path('api/v1/', include('applications.shop_api.urls')),
 ]
 
 
