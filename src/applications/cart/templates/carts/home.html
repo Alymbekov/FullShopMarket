@@ -4,13 +4,74 @@
 
 
 {% block content %}
+
+<div class="card">
+    <div class="row">
+        <div class="col-md-8 cart">
+            <div class="title">
+                <div class="row">
+                    <div class="col">
+                        <h4><b>Shopping Cart</b></h4>
+                    </div>
+                    <div class="col align-self-center text-right text-muted">{{carts.products.count}} items</div>
+                </div>
+            </div>
+            {% for product in carts.products.all %}
+            <div class="row border-top border-bottom">
+                <div class="row main align-items-center">
+                    <div class="col-2"><img class="img-fluid" src="{{product.image.url}}"></div>
+                    <div class="col">
+                        <div class="row text-muted">{{forloop.counter}}</div>
+                        <div class="row">{{product.title}}</div>
+                    </div>
+                    <div class="col"> <a href="#">-</a><a href="#" class="border">1</a><a href="#">+</a> </div>
+                    <div class="col">&euro; {{product.price}}
+                        {% include 'products/snippets/update-cart.html' with product=product carts=carts%}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="back-to-shop"><a href="#">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
+        </div>
+        <div class="col-md-4 summary">
+            <div>
+                <h5><b>Summary</b></h5>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col" style="padding-left:0;">ITEMS 3</div>
+                <div class="col text-right">&euro; 132.00</div>
+            </div>
+            <form method="POST" action="{% url 'checkout' %}"> {% csrf_token %}
+                <p>SHIPPING</p> <select>
+                    <option class="text-muted">Standard-Delivery- &euro;5.00</option>
+                </select>
+                <label for="address1">Address1 </label>
+                <input type="text" id="address1" name='address1'>
+                <label for="address2">Address2</label>
+                <input type="text" id="address2" name='address2'>
+                <label for="phonenumber">PhoneNumber</label>
+                <input type="text" id="phonenumber" name="phonenumber" id="">
+
+                <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                    <div class="col">TOTAL PRICE</div>
+                    <div class="col text-right">&euro; {{carts.subtotal}}</div>
+                </div> <button class="btn">CHECKOUT</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+<!-- 
+
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">Product Title</th>
             <th scope="col">Price</th>
-            <!-- <th scope="col">Handle</th> -->
         </tr>
     </thead>
     <tbody>
@@ -18,14 +79,14 @@
         <tr>
             <th scope="row">{{forloop.counter}}</th>
             <td>
-                
+
                 <a href="{{product.get_absolute_url}}">{{product.title}}
-        
+
                 </a>
                 <small><a href="">
-                    {% include 'products/snippets/update-cart.html' with product=product carts=carts%}
-                </a></small>
-                
+                        {% include 'products/snippets/update-cart.html' with product=product carts=carts%}
+                    </a></small>
+
             </td>
             <td>{{product.price}}</td>
         </tr>
@@ -34,9 +95,14 @@
             <th scope="row">#</th>
             <td>Total {{carts.total}}</td>
             <td><b>Subtotal {{carts.subtotal}}</b></td>
+
+        <tr>
+            <td>
+                <form method="POST" action="{% url 'checkout' %}"> {% csrf_token %}
+                    <input type="hidden" name='cart_id' value='{{carts.id}}'>
+                <button class='btn btn-success'> Checkout </button>
+                </form>
+            </td>
         </tr>
     </tbody>
-</table>
-
-
-{% endblock %}
+</table> -->
