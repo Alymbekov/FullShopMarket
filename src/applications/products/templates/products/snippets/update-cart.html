@@ -2,7 +2,7 @@
 
     <input type="hidden" name="product_id" value="{{product.id}}">
     {% if product in carts.products.all %}
-    In cart <button type="submit" class="btn btn-link"> Delete ?</button>
+    In cart <button type="submit"><span class="close">&#10005;</span></button>
     {% else %}
     <button type="submit" class="btn btn-succes">Add to Cart</button>
 

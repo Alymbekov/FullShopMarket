@@ -3,6 +3,7 @@
 {% url 'products:list' as product_list_url %}
 {% url 'login' as login_url %}
 {% url 'register' as register_url %}
+{% load static %}
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
     <div class='container'>
@@ -51,6 +52,10 @@
                 </li>
                 {% endif %}
 
+
+                <li class="nav-item">
+                    <span class='bg-danger'> In Cart - {{request.session.cart_items}} </span>
+                </li>
                 {% if page_products %}
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search"
